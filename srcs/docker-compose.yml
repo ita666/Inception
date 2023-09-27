@@ -1,0 +1,80 @@
+version: '3.5'
+
+
+services:
+  mariadb:
+    image: mariadb:1.0
+    container_name: mariadb
+    build: 
+      context: ./requirements/mariadb
+    volumes:
+      - mariadb_vol:/var/lib/mysql/
+    expose:
+      - "3306"
+    networks:
+      - inception
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+      test: mysqladmin ping --host=localhost -p${MARIADB_ROOT_PASSWORD}
+      interval: 5s
+      timeout: 1s
+      retries: 20
+      start_period: 5s
+
+  wordpress:
+    image: wordpress:1.0
+    container_name: wordpress
+    build: 
+      context: ./requirements/wordpress
+    volumes:
+      - wordpress_vol:/var/www/html/
+    restart: unless-stopped
+    expose: 
+      - "9000"
+    networks:
+      - inception
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    env_file: .env
+
+  nginx:
+    image: nginx:1.0
+    container_name: nginx
+    build: requirements/nginx
+    volumes:
+      - wordpress_vol:/var/www/html
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    networks:
+      - inception
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+      test: 'curl -kfsSL https://localhost:443/status'
+      interval: 5s
+      timeout: 1s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  mariadb_vol:
+    driver: local
+    driver_opts:
+      type: 'none' 
+      o: 'bind'
+      device: '/home/yanthoma/data/mariadb'
+
+  wordpress_vol:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/yanthoma/data/wordpress'
+networks:
+  inception:
+    name: inception
+    driver: bridge
