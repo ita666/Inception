@@ -1,7 +1,11 @@
 #creat 'data' folder in /home/yanthoma/
 
 all: 
-	cp /home/yanthoma/.env ./srcs/
+	@if [ ! -e "srcs/.env" ]; then \
+		if [ -e "/home/yanthoma/.env" ]; then \
+			cp /home/yanthoma/.env srcs/.env; \
+		fi; \
+	fi;
 	mkdir -p /home/yanthoma/data/mariadb
 	mkdir -p /home/yanthoma/data/wordpress
 	docker compose -f ./srcs/docker-compose.yml build
@@ -13,9 +17,13 @@ logs:
 	docker logs nginx
 
 clean:
-	docker compose -f ./srcs/docker-compose.yml down
-	docker system prune -af
-	rm ./srcs/.env
+	@if [ -e "srcs/.env" ]; then \
+		docker compose -f ./srcs/docker-compose.yml down; \
+	else \
+		echo "Warning: .env file is missing. Docker compose services may not be stopped correctly."; \
+	fi;
+	-docker system prune -af
+	rm -f ./srcs/.env
 
 fclean: clean
 	sudo rm -rf /home/yanthoma/data/mariadb/*
