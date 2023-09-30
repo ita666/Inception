@@ -1,9 +1,10 @@
-version: '3.5'
+version: '3.8'
 
 
 services:
   mariadb:
     image: mariadb:1.0
+    command: ["./mariadb.sh"]
     container_name: mariadb
     build: 
       context: ./requirements/mariadb
@@ -24,6 +25,7 @@ services:
 
   wordpress:
     image: wordpress:1.0
+    command: ["./config_wp.sh"]
     container_name: wordpress
     build: 
       context: ./requirements/wordpress

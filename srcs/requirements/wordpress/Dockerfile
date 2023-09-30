@@ -27,4 +27,4 @@ COPY 	tools/config_wp.sh config_wp.sh
 
 RUN		chmod +x config_wp.sh
 
-CMD ["./config_wp.sh"]
+#CMD ["./config_wp.sh"]

@@ -8,8 +8,7 @@ all:
 	fi;
 	mkdir -p /home/yanthoma/data/mariadb
 	mkdir -p /home/yanthoma/data/wordpress
-	docker compose -f ./srcs/docker-compose.yml build
-	docker compose -f ./srcs/docker-compose.yml up -d
+	docker compose -f ./srcs/docker-compose.yml up --build -d
 
 logs:
 	docker logs wordpress
