@@ -15,21 +15,21 @@ else
 
 	sleep 5
 
-	# Configuring MYSQL
+
 	mariadb -u root < /var/lib/mysql/config_db.sql
 
-	#Changing root password
+
 	mariadb -u root < /var/lib/mysql/change_root.sql
 
-	#Shuting down the database
+
 	mariadb-admin --user=root --password=$MARIADB_ROOT_PASSWORD shutdown
 
-	#Removing temporary files
+
 	rm /var/lib/mysql/change_root.sql /var/lib/mysql/config_db.sql
 
-	#Creating first_config_db_done
+
 	touch /var/lib/mysql/first_config_db_done
 fi
 
-#Launching mysql_safe service
+
 exec mysqld_safe;

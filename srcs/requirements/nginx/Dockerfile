@@ -5,6 +5,7 @@ LABEL	version="1.0"
 
 RUN		apt update -y \
 		&& apt upgrade -y \
+		&& apt install -y curl \
 		&& apt install -y nginx \
 		&& mkdir -p /etc/nginx/ssl \
 		&& apt install openssl -y
